@@ -74,63 +74,9 @@ post_download_check() {
             echo ""
         fi        
         exit 0
-    fi
-
-    check_autoboot
+    fi    
 }
 
-######################################################################
-# autoboot
-######################################################################
-check_autoboot() {
-
-    CONFIG_FILE="/media/fat/ConsoleMode/config.ini"
-    MAIN_BINARY_DIR="/media/fat/MainBinary"
-    AUTO_BINARY_FILE="/media/fat/AutoBinary/MiSTer"
-    MISTER_FILE="/media/fat/MiSTer"
-    MENU_FILE="/media/fat/protected/CMmenu.rbf"
-
-    if [ ! -f "$CONFIG_FILE" ]; then
-        echo "$CONFIG_FILE is not exist"
-        echo "Update complete."
-        echo "exit..."
-        exit 0
-    fi
-
-    AUTOboot=$(grep -E "^autoboot=" "$CONFIG_FILE" | cut -d'=' -f2 | tr -d ' \t')
-
-    if [ -z "$AUTOboot" ]; then
-        echo "No autoboot configuration item found"
-        echo "Update complete."
-        echo "exit..."
-        exit 0
-    fi
-
-    mkdir -p "$MAIN_BINARY_DIR"
-
-    if [ "$AUTOboot" = "true" ]; then
-        echo "autoboot is true..."
-
-        cp -f "$MISTER_FILE" "$MAIN_BINARY_DIR/"
-        cp -f "$MENU_FILE" /media/fat/menu.rbf
-
-        if [ -f "$AUTO_BINARY_FILE" ]; then
-            cp -f "$AUTO_BINARY_FILE" "/media/fat/"
-        else
-            echo "Warning: Not found $AUTO_BINARY_FILE"
-            echo "Update complete."
-        fi
-
-    else
-        echo "autoboot is false..."
-        cp -f "$MISTER_FILE" "$MAIN_BINARY_DIR/"
-    fi
-
-    echo "reboot..."
-    sleep 3
-    reboot
-    exit 0
-}
 
 # NTP SETUP
 if (( 10#$(date +%Y) < 2000 )) ; then
